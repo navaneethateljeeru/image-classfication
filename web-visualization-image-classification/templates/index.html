@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Training Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            margin-top: 20px;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .info-box pre {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85em;
+            color: #333;
+        }
+
+        .progress-container {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .logs-container {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            height: 450px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        .logs-header {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .log-entry {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            display: flex;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-entry.info {
+            color: #90caf9;
+        }
+
+        .log-entry.success {
+            color: #66bb6a;
+            background: rgba(102, 187, 106, 0.1);
+        }
+
+        .log-entry.warning {
+            color: #ffb74d;
+            background: rgba(255, 183, 77, 0.1);
+        }
+
+        .log-entry.error {
+            color: #ef5350;
+            background: rgba(239, 83, 80, 0.1);
+        }
+
+        .log-time {
+            color: #757575;
+            font-weight: 600;
+        }
+
+        .empty-logs {
+            color: #757575;
+            text-align: center;
+            padding: 50px;
+            font-style: italic;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #777;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dataset-info {
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .dataset-info.active {
+            display: block;
+        }
+
+        .dataset-info h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .dataset-info p {
+            color: #555;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Universal ML Training Platform</h1>
+            <p>Train image classification models on any dataset with any number of classes</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Configuration Panel -->
+            <div class="panel">
+                <h2>⚙️ Training Configuration</h2>
+
+                <div class="dataset-info" id="datasetInfo">
+                    <h4>Dataset Information</h4>
+                    <p><strong>Classes:</strong> <span id="numClasses">-</span></p>
+                    <p><strong>Total Images:</strong> <span id="totalImages">-</span></p>
+                    <p><strong>Class Names:</strong> <span id="classNames">-</span></p>
+                </div>
+
+                <form id="trainingForm">
+                    <div class="form-group">
+                        <label>Dataset Directory Path</label>
+                        <input type="text" id="dataDir" placeholder="e.g., /path/to/dataset or data" required>
+                        <button type="button" class="btn btn-primary" onclick="checkDataset()" style="margin-top: 10px; padding: 10px;">
+                            Check Dataset
+                        </button>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Epochs</label>
+                            <input type="number" id="epochs" value="5" min="1" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Batch Size</label>
+                            <input type="number" id="batchSize" value="32" min="1" max="128" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Train Split (%)</label>
+                            <input type="number" id="trainSplit" value="70" min="1" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Val Split (%)</label>
+                            <input type="number" id="valSplit" value="15" min="0" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Test Split (%)</label>
+                            <input type="number" id="testSplit" value="15" min="0" max="100" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Image Size (pixels)</label>
+                        <input type="number" id="imageSize" value="256" min="32" max="512" step="32" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="trainBtn">
+                        ▶️ Start Training
+                    </button>
+                </form>
+
+                <div class="info-box">
+                    <h3>📁 Dataset Structure Required</h3>
+                    <pre>dataset/
+├── class1/
+│   ├── img1.jpg
+│   └── img2.jpg
+├── class2/
+│   └── img3.jpg
+└── class3/
+    └── img4.jpg</pre>
+                </div>
+            </div>
+
+            <!-- Monitoring Panel -->
+            <div class="panel">
+                <h2>📊 Training Monitor</h2>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="currentEpoch">0</div>
+                        <div class="stat-label">Current Epoch</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="accuracy">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="loss">0.00</div>
+                        <div class="stat-label">Loss</div>
+                    </div>
+                </div>
+
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-header">
+                        <span>Training Progress</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+
+                <div class="logs-container">
+                    <div class="logs-header">📋 Training Logs</div>
+                    <div id="logs">
+                        <div class="empty-logs">No logs yet. Start training to see progress...</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" id="downloadBtn" style="display: none;">
+                    ⬇️ Download Trained Model
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let statusInterval = null;
+
+        document.getElementById('trainingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const config = {
+                data_dir: document.getElementById('dataDir').value,
+                epochs: parseInt(document.getElementById('epochs').value),
+                batch_size: parseInt(document.getElementById('batchSize').value),
+                train_split: parseFloat(document.getElementById('trainSplit').value) / 100,
+                val_split: parseFloat(document.getElementById('valSplit').value) / 100,
+                test_split: parseFloat(document.getElementById('testSplit').value) / 100,
+                image_size: parseInt(document.getElementById('imageSize').value)
+            };
+
+            // Validate splits
+            const totalSplit = config.train_split + config.val_split + config.test_split;
+            if (Math.abs(totalSplit - 1.0) > 0.01) {
+                alert('Train, Val, and Test splits must sum to 100%');
+                return;
+            }
+
+            const trainBtn = document.getElementById('trainBtn');
+            trainBtn.disabled = true;
+            trainBtn.innerHTML = '<span class="spinner"></span> Starting...';
+            
+            try {
+                const response = await fetch('/api/train', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(config)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('progressContainer').classList.add('active');
+                    startStatusPolling();
+                } else {
+                    alert('Error: ' + result.error);
+                    trainBtn.disabled = false;
+                    trainBtn.innerHTML = '▶️ Start Training';
+                }
+            } catch (error) {
+                alert('Error starting training: ' + error.message);
+                trainBtn.disabled = false;
+                trainBtn.innerHTML = '▶️ Start Training';
+            }
+        });
+
+        async function checkDataset() {
+            const dataDir = document.getElementById('dataDir').value;
+            if (!dataDir) {
+                alert('Please enter a dataset directory path');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/dataset/info', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ data_dir: dataDir })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('datasetInfo').classList.add('active');
+                    document.getElementById('numClasses').textContent = result.num_classes;
+                    document.getElementById('totalImages').textContent = result.total_images;
+                    document.getElementById('classNames').textContent = result.class_names.join(', ');
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error checking dataset: ' + error.message);
+            }
+        }
+
+        function startStatusPolling() {
+            statusInterval = setInterval(updateStatus, 1000);
+        }
+
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const status = await response.json();
+                
+                // Update progress bar
+                const progressBar = document.getElementById('progressBar');
+                const progressPercent = document.getElementById('progressPercent');
+                progressBar.style.width = status.progress + '%';
+                progressPercent.textContent = Math.round(status.progress) + '%';
+                
+                // Update stats
+                document.getElementById('currentEpoch').textContent = 
+                    status.current_epoch + '/' + status.total_epochs;
+                document.getElementById('accuracy').textContent = 
+                    (status.accuracy * 100).toFixed(1) + '%';
+                document.getElementById('loss').textContent = status.loss.toFixed(4);
+                
+                // Update logs
+                updateLogs(status.logs);
+                
+                // Check if training is complete
+                if (!status.is_training && status.progress >= 100) {
+                    clearInterval(statusInterval);
+                    const trainBtn = document.getElementById('trainBtn');
+                    trainBtn.disabled = false;
+                    trainBtn.innerHTML = '▶️ Start Training';
+                    
+                    const downloadBtn = document.getElementById('downloadBtn');
+                    downloadBtn.style.display = 'block';
+                    downloadBtn.onclick = () => window.location.href = '/api/download';
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        function updateLogs(logs) {
+            const logsContainer = document.getElementById('logs');
+            
+            if (logs.length === 0) {
+                logsContainer.innerHTML = '<div class="empty-logs">No logs yet. Start training to see progress...</div>';
+                return;
+            }
+            
+            logsContainer.innerHTML = logs.map(log => `
+                <div class="log-entry ${log.type}">
+                    <span class="log-time">[${log.time}]</span>
+                    <span>${escapeHtml(log.message)}</span>
+                </div>
+            `).join('');
+            
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initial status check
+        updateStatus();
+    </script>
+</body>
+</html>
